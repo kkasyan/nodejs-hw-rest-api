@@ -2,7 +2,13 @@ const { httpError } = require("./../utils");
 
 const validateBody = (schema) => {
   const func = (req, res, next) => {
+    const { name, email, phone } = req.body;
     const { error } = schema.validate(req.body);
+
+    if (!name & !email & !phone) {
+      next(httpError(400, "missing fields"));
+    }
+
     if (error) {
       next(httpError(400, error.message));
     }
