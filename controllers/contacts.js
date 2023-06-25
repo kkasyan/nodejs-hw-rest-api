@@ -1,4 +1,4 @@
-const contacts = require("./../models/contacts");
+const contacts = require("./../models/contact");
 const { httpError, controllerWrapper } = require("./../utils");
 
 const getAllContacts = async (req, res) => {
