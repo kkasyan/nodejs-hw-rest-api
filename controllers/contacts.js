@@ -38,10 +38,22 @@ const editContact = async (req, res) => {
   res.json(result);
 };
 
+const updateStatusContact = async (req, res) => {
+  const { contactId } = req.params;
+  const result = await Contact.findByIdAndUpdate(contactId, req.body, {
+    new: true,
+  });
+  if (!result) {
+    throw httpError(404, "Not found");
+  }
+  res.json(result);
+};
+
 module.exports = {
   getAllContacts: controllerWrapper(getAllContacts),
   getById: controllerWrapper(getById),
   addContact: controllerWrapper(addContact),
   deleteContact: controllerWrapper(deleteContact),
   editContact: controllerWrapper(editContact),
+  updateStatusContact: controllerWrapper(updateStatusContact),
 };
