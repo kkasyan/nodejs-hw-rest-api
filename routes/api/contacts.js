@@ -35,12 +35,12 @@ router.put(
   editContact
 );
 
-// router.patch(
-//   "/:contactId/favorite",
-//   authenticate,
-//   isValidId,
-//   validation.validateBodyForPatch(schemas.updateFavSchema),
-//   updateStatusContact
-// );
+router.patch(
+  "/:contactId/favorite",
+  authenticate,
+  isValidId,
+  validation.validateBodyForPatch(schemas.updateFavSchema),
+  updateStatusContact
+);
 
 module.exports = router;
