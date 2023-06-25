@@ -11,29 +11,36 @@ const {
   updateStatusContact,
 } = require("../../controllers/contacts");
 
-const { validation, isValidId } = require("./../../middlewares");
+const { validation, isValidId, authenticate } = require("./../../middlewares");
 const { schemas } = require("../../models/contact");
 
-router.get("/", getAllContacts);
+router.get("/", authenticate, getAllContacts);
 
-router.get("/:contactId", isValidId, getById);
+router.get("/:contactId", authenticate, isValidId, getById);
 
-router.post("/", validation.validateBody(schemas.addSchema), addContact);
+router.post(
+  "/",
+  authenticate,
+  validation.validateBody(schemas.addSchema),
+  addContact
+);
 
-router.delete("/:contactId", isValidId, deleteContact);
+router.delete("/:contactId", authenticate, isValidId, deleteContact);
 
 router.put(
   "/:contactId",
+  authenticate,
   isValidId,
   validation.validateBody(schemas.addSchema),
   editContact
 );
 
-router.patch(
-  "/:contactId/favorite",
-  isValidId,
-  validation.validateBodyForPatch(schemas.updateFavSchema),
-  updateStatusContact
-);
+// router.patch(
+//   "/:contactId/favorite",
+//   authenticate,
+//   isValidId,
+//   validation.validateBodyForPatch(schemas.updateFavSchema),
+//   updateStatusContact
+// );
 
 module.exports = router;
