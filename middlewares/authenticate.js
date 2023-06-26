@@ -9,7 +9,7 @@ dotenv.config();
 
 const authenticate = async (req, res, next) => {
   const { authorization = "" } = req.headers;
-  const { contactId } = req.params;
+  // const { contactId } = req.params;
   const [bearer, token] = authorization.split(" ");
   if (bearer !== "Bearer") {
     next(httpError(401, "Not authorized"));
@@ -19,7 +19,7 @@ const authenticate = async (req, res, next) => {
     const { contactId: id } = jwt.verify(token, SECRET_KEY);
     const user = await User.findById(id);
     if (!user || !user.token || user.token !== token) {
-      next(httpError(401, "User not found"));
+      next(httpError(401, "Not authorized"));
     }
     req.user = user;
     next();

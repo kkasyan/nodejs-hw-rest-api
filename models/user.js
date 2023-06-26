@@ -3,7 +3,7 @@ const { Schema, model } = require("mongoose");
 
 const { handleMongooseError } = require("../utils");
 
-const subscribtionType = ["starter", "pro", "business"];
+const subscriptionType = ["starter", "pro", "business"];
 
 const userSchema = Schema(
   {
@@ -18,7 +18,7 @@ const userSchema = Schema(
     },
     subscription: {
       type: String,
-      enum: subscribtionType,
+      enum: subscriptionType,
       default: "starter",
     },
     token: String,
@@ -29,15 +29,23 @@ const userSchema = Schema(
 userSchema.post("save", handleMongooseError);
 
 const registerSchema = Joi.object({
-  password: Joi.string().required(),
-  email: Joi.string().required(),
-  subscribtion: Joi.string().valid(...subscribtionType).required,
+  password: Joi.string().required().messages({
+    "any.required": `Missing requied password field`,
+  }),
+  email: Joi.string().required().messages({
+    "any.required": `Missing requied email field`,
+  }),
+  subscription: Joi.string().valid(...subscriptionType),
 });
 
 const loginSchema = Joi.object({
-  password: Joi.string().required(),
-  email: Joi.string().required(),
-  subscribtion: Joi.string().valid(...subscribtionType).required,
+  password: Joi.string().required().messages({
+    "any.required": `Missing requied password field`,
+  }),
+  email: Joi.string().required().messages({
+    "any.required": `Missing requied email field`,
+  }),
+  subscription: Joi.string().valid(...subscriptionType),
 });
 
 const schemas = { registerSchema, loginSchema };

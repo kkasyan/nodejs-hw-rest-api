@@ -1,26 +1,37 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
 
 const { User } = require("../models/user");
 const { httpError, controllerWrapper } = require("./../utils");
 const { SECRET_KEY } = process.env;
 
+dotenv.config();
+
 const register = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, subscription } = req.body;
+
   const user = await User.findOne({ email });
   if (user) {
-    throw httpError(409, "This email is already in use!");
+    throw httpError(409, "Email in use");
   }
 
   const hashPassword = await bcrypt.hash(password, 10);
-  const newUser = await User.create({ ...req.body, password: hashPassword });
+  const newUser = await User.create({
+    ...req.body,
+    password: hashPassword,
+  });
 
-  res.status(201).json({ password: newUser.password, email: newUser.email });
+  res.status(201).json({
+    user: {
+      email: newUser.email,
+      subscription: newUser.subscription,
+    },
+  });
 };
 
 const login = async (req, res) => {
-  const { email, password } = req.body;
-  const { contactId } = req.params;
+  const { email, password, subscription } = req.body;
   const user = await User.findOne({ email });
 
   if (!user) {
@@ -38,23 +49,25 @@ const login = async (req, res) => {
   const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "13h" });
 
   await User.findByIdAndUpdate(user._id, { token });
-  res.json({ token });
+  res.json({
+    token,
+    user: { email: user.email, subscription: user.subscription },
+  });
 };
 
 const getCurrent = async (req, res) => {
-  const { email, subscribtion } = req.user;
+  const { email, subscription } = req.user;
 
   res.json({
     email,
-    subscribtion,
+    subscription,
   });
 };
 
 const logout = async (req, res) => {
   const { _id } = req.user;
-  await User.findByIdAndUpdate(_id, { token: "" });
-
-  res.json({ message: "Logout success" });
+  const result = await User.findByIdAndUpdate(_id, { token: "" });
+  return res.status(204).json(result);
 };
 
 module.exports = {
