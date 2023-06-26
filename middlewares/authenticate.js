@@ -9,7 +9,6 @@ dotenv.config();
 
 const authenticate = async (req, res, next) => {
   const { authorization = "" } = req.headers;
-  // const { contactId } = req.params;
   const [bearer, token] = authorization.split(" ");
   if (bearer !== "Bearer") {
     next(httpError(401, "Not authorized"));
