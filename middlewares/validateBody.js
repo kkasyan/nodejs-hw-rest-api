@@ -8,6 +8,17 @@ const validateBody = (schema) => {
     if (!name & !email & !phone) {
       next(httpError(400, "missing fields"));
     }
+    if (error) {
+      next(httpError(400, error.message));
+    }
+    next();
+  };
+  return func;
+};
+
+const validateBodyForPatch = (schema) => {
+  const func = (req, res, next) => {
+    const { error } = schema.validate(req.body);
 
     if (error) {
       next(httpError(400, error.message));
@@ -16,6 +27,7 @@ const validateBody = (schema) => {
   };
   return func;
 };
+
 
 const validateBodyForPatch = (schema) => {
   const func = (req, res, next) => {
