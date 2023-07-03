@@ -5,6 +5,8 @@ const {
   getCurrent,
   logout,
   updateAvatar,
+  verifyEmail,
+  resendVerificationEmail,
 } = require("../../controllers/auth");
 const { validation, authenticate, upload } = require("../../middlewares");
 const { schemas } = require("../../models/user");
@@ -18,6 +20,14 @@ router.post(
 );
 
 router.post("/login", validation.validateBody(schemas.loginSchema), login);
+
+router.get("/verify/:verificationToken", verifyEmail);
+
+router.post(
+  "/verify",
+  validation.validateBodyForPatch(schemas.emailSchema),
+  resendVerificationEmail
+);
 
 router.get("/current", authenticate, getCurrent);
 
